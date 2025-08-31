@@ -38,4 +38,67 @@ Changelog:
  - 2025-08-28: Restored missing styles for index.html bottom grid (Recent Achievements, Goals, Quick Actions) by adding .bottom-grid and achievement/goal/action classes to styles.css.
  - 2025-08-28: Integrated HTMX partial navigation with preserved layout, active nav syncing, and heatmap re-init after swaps.
  - 2025-08-28: Switched HTMX to a local vendored copy (assets/js/htmx.min.js) and removed CDN dependency.
-- 2025-08-28: Added a micro chart helper (assets/js/fuurin-charts.js) and wired the Weekly Study Time bars to data-attributes for clean rendering/animation after HTMX swaps. Added data-max="100" to Weekly Study Time to match baseline percentages exactly.
+ - 2025-08-28: Added a micro chart helper (assets/js/fuurin-charts.js) and wired the Weekly Study Time bars to data-attributes for clean rendering/animation after HTMX swaps. Added data-max="100" to Weekly Study Time to match baseline percentages exactly.
+ - 2025-08-31: Centralized client scripts in SvelteKit layout (+layout.svelte) so all routes include /assets/js/htmx.min.js and /assets/js/fuurin-charts.js; removed per-page script includes from home and activity feed to avoid double-loading. Moved active-nav updater to layout so it works on all routes. Updated answer: migration to SvelteKit is operational for /, /dashboard, /activity-feed. Dev: npm run dev; Build: npm run build; Preview: npm run preview.
+
+Migration to SvelteKit (2025-08-29):
+- Introduced a minimal SvelteKit setup to run the app as a proper SPA/SSR app.
+- Key files added:
+  - package.json: scripts now use svelte-kit build/preview; dev uses vite dev.
+  - svelte.config.js with @sveltejs/adapter-auto.
+  - vite.config.ts with sveltekit plugin.
+  - tsconfig.json extending @sveltejs/kit/tsconfig.
+  - src/routes/+layout.svelte imports src/app.css which @imports existing styles.css.
+  - src/routes/+page.svelte (home), src/routes/dashboard/+page.svelte, src/routes/activity-feed/+page.svelte created by porting the corresponding HTML pages.
+  - static/assets/js contains vendored htmx.min.js stub and fuurin-charts.js for client scripts.
+- Asset strategy:
+  - CSS: We keep styles.css at repo root and import it inside src/app.css to avoid large refactors. All pages inherit the styling via the root layout.
+  - JS: Client-side scripts are served from /assets/js via the static/ directory; references updated to absolute paths (e.g., /assets/js/htmx.min.js).
+- Routing changes:
+  - Links updated to SvelteKit routes: "/", "/dashboard", "/activity-feed".
+  - Active-nav updater script adapted to use pathname rather than .html filenames.
+- How to run locally:
+  1) Install deps: npm install
+  2) Dev server: npm run dev (default http://localhost:5173)
+  3) Build: npm run build
+  4) Preview production build: npm run preview (default http://localhost:4173)
+- Docker image:
+  - Dockerfile added for multi-stage build. Build and run:
+    - docker build -t fuurin2 .
+    - docker run -it --rm -p 3000:3000 fuurin2
+  - The container exposes port 3000 (SvelteKit build with adapter-auto selects Node adapter in container).
+- Notes:
+  - The vendored htmx.min.js in static is a lightweight stub that only fires htmx lifecycle events used by our inline scripts; replace with the official htmx when needed.
+  - Static assets must live under static/ to be served by SvelteKit at runtime. We duplicated assets/js there; keep root copies for history if needed or remove later.
+
+
+Démarrage rapide (SvelteKit) — FR (2025-08-29):
+- Prérequis: Node.js 18+ (recommandé Node 20+), npm. Vérifiez avec: node -v, npm -v.
+
+Lancer en local (développement):
+1) npm install
+2) npm run dev
+   - Ouvrez: http://localhost:5173
+
+Build et aperçu production:
+1) npm run build
+2) npm run preview
+   - Ouvrez: http://localhost:4173
+
+Avec Docker (production):
+1) docker build -t fuurin2 .
+2) docker run -it --rm -p 3000:3000 fuurin2
+   - Ouvrez: http://localhost:3000
+
+Avec Docker Compose — le plus simple:
+1) docker compose up --build
+   - Ouvrez: http://localhost:3000
+2) Arrêter: docker compose down
+3) Changer de port: éditez docker-compose.yml (ports: "3001:3000") ou lancez avec: docker compose run -p 3001:3000 web
+
+Notes Windows / Dépannage:
+- Si “npm n’est pas reconnu”: installez Node.js depuis https://nodejs.org/, rouvrez votre terminal PowerShell.
+- Pare-feu Windows: acceptez l’invite lors du premier lancement pour permettre l’écoute locale.
+- Port déjà utilisé: changez de port (dev: npm run dev -- --port=5174 ; preview: npm run preview -- --port=4174 ; docker: mappez un autre port, ex. -p 3001:3000).
+- OneDrive: les chemins OneDrive fonctionnent; évitez les caractères spéciaux non ASCII dans les noms de dossier si vous rencontrez des soucis.
+- htmx: une version “stub” est servie depuis /assets/js pour ce prototype; remplacez-la par la version officielle si vous avez besoin de la navigation boostée.

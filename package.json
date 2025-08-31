@@ -1,0 +1,18 @@
+{
+  "name": "fuurin2",
+  "private": true,
+  "type": "module",
+  "version": "0.2.0",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "svelte-kit build",
+    "preview": "svelte-kit preview"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^3.3.1",
+    "@sveltejs/kit": "^2.5.18",
+    "svelte": "^4.2.18",
+    "vite": "^5.3.5",
+    "typescript": "^5.5.4"
+  }
+}
