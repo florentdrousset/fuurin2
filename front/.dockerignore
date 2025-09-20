@@ -1,0 +1,21 @@
+# Prevent host artifacts from clobbering container build
+../node_modules
+.svelte-kit
+build
+
+# VCS and metadata
+.git
+.gitignore
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files not needed in context (optional)
+Dockerfile

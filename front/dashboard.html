@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ふうりん - Dashboard</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #f8f9fa 100%);
+            color: #374151;
+            min-height: 100vh;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #0891b2, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+
+        .nav-button:hover {
+            background: rgba(243, 244, 246, 0.5);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, #ec4899, rgba(236, 72, 153, 0.8));
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 256px;
+            background: #ffffff;
+            border-right: 2px solid #d1d5db;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding-top: 64px;
+        }
+
+        .sidebar-content {
+            padding: 16px;
+        }
+
+        .sidebar-header {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 2px solid #e5e7eb;
+            text-decoration: none;
+            color: #6b7280;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: #f9fafb;
+            color: #374151;
+            border-color: #d1d5db;
+            transform: scale(1.02);
+        }
+
+        .nav-item.active {
+            background: #f3f4f6;
+            color: #111827;
+            border-color: #06b6d4;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #d1d5db;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            color: #374151;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active .nav-icon {
+            background: linear-gradient(135deg, #cffafe, #bfdbfe);
+            border-color: #06b6d4;
+            color: #0e7490;
+        }
+
+        .nav-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .nav-name {
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nav-desc {
+            font-size: 12px;
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .active-indicator {
+            width: 8px;
+            height: 8px;
+            background: #06b6d4;
+            border-radius: 50%;
+        }
+
+        .study-streak {
+            margin-top: 32px;
+            padding: 12px;
+            background: rgba(243, 244, 246, 0.5);
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .streak-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .streak-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+
+        .streak-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .streak-subtext {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 256px;
+            padding-top: 64px;
+            padding: 64px 24px 24px 280px;
+        }
+
+        .content-wrapper {
+            max-width: 1152px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.1), rgba(236, 72, 153, 0.05), rgba(8, 145, 178, 0.05));
+            padding: 24px;
+            margin-bottom: 32px;
+            image-rendering: pixelated;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #0891b2, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-subtitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .welcome-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 16px;
+            max-width: 512px;
+        }
+
+        /* Cards */
+        .card {
+            background: #fefefe;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: #9ca3af;
+        }
+
+        .card-header {
+            padding: 16px 16px 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+        }
+
+        .card-content {
+            padding: 16px;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .table thead tr {
+            border-bottom: 2px solid #d1d5db;
+        }
+
+        .table th {
+            text-align: left;
+            padding: 12px 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(243, 244, 246, 0.3);
+        }
+
+        .table td {
+            padding: 12px 8px;
+        }
+
+        .table .date-cell {
+            color: #6b7280;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .table .activity-cell {
+            color: #374151;
+        }
+
+        .table .words-cell {
+            color: #6b7280;
+            text-align: center;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        /* Pie Chart */
+        .pie-chart-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .pie-chart {
+            width: 256px;
+            height: 256px;
+            transform: rotate(-90deg);
+        }
+
+        .pie-slice {
+            transition: all 0.5s;
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .legend-label {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .legend-value {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Updated bar chart styling to match React version exactly */
+        .bar-chart {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            height: 128px;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .bar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .bar-fill {
+            width: 100%;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px 6px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar-inner {
+            width: 100%;
+            background: #06b6d4;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.7s;
+            min-height: 4px;
+            height: 100%;
+        }
+
+        .bar-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #374151;
+            margin-top: 8px;
+        }
+
+        .bar-value {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .chart-summary {
+            text-align: center;
+        }
+
+        .chart-summary-main {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .chart-summary-sub {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Line Chart */
+        .line-chart-container {
+            position: relative;
+            height: 256px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: rgba(243, 244, 246, 0.2);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .y-axis-label {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: rotate(-90deg);
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .chart-area {
+            margin-left: 32px;
+            margin-bottom: 32px;
+            height: 100%;
+            position: relative;
+        }
+
+        .grid-lines {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            opacity: 0.2;
+        }
+
+        .grid-cell {
+            border: 1px solid #d1d5db;
+        }
+
+        .chart-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line {
+            fill: none;
+            stroke-width: 2;
+            transition: all 0.5s;
+        }
+
+        .chart-point {
+            transition: all 0.3s;
+        }
+
+        .chart-point:hover {
+            r: 4;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        /* Progress Bars */
+        .progress-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-label {
+            font-weight: 500;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .progress-stats {
+            text-align: right;
+        }
+
+        .progress-percentage {
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .progress-count {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #ec4899;
+            border-radius: 6px;
+            transition: all 0.5s;
+        }
+
+        /* Streak Grid */
+        .streak-display {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .streak-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #06b6d4;
+        }
+
+        .streak-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .streak-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin: 16px 0;
+        }
+
+        .streak-cell {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+            transition: all 0.2s;
+        }
+
+        .streak-cell:hover {
+            transform: scale(1.1);
+        }
+
+        .streak-cell.active {
+            background: #06b6d4;
+        }
+
+        .streak-cell.inactive {
+            background: #f3f4f6;
+        }
+
+        .streak-period {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Updated week navigation styling */
+        .week-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .week-nav-button {
+            padding: 4px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background: transparent;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .week-nav-button:hover {
+            background: #f3f4f6;
+        }
+
+        .week-nav-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+<!-- Top Navigation -->
+<header class="top-nav">
+    <div class="top-nav-content">
+        <div>
+            <h1 class="logo">ふうりん</h1>
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                </svg>
+                <span class="notification-dot"></span>
+            </button>
+            <button class="nav-button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<div class="sidebar">
+    <div class="sidebar-content">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">ナビゲーション</h2>
+            <p class="sidebar-subtitle">Navigate your learning journey</p>
+        </div>
+
+        <nav class="nav-items">
+            <a href="index.html" class="nav-item">
+                <div class="nav-icon">家</div>
+                <div class="nav-text">
+                    <div class="nav-name">Home</div>
+                    <div class="nav-desc">Dashboard</div>
+                </div>
+            </a>
+            <a href="#" class="nav-item active">
+                <div class="nav-icon">板</div>
+                <div class="nav-text">
+                    <div class="nav-name">Dashboard</div>
+                    <div class="nav-desc">Overview</div>
+                </div>
+                <div class="active-indicator"></div>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="nav-icon">賞</div>
+                <div class="nav-text">
+                    <div class="nav-name">Awards</div>
+                    <div class="nav-desc">Achievements</div>
+                </div>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="nav-icon">活</div>
+                <div class="nav-text">
+                    <div class="nav-name">Feed</div>
+                    <div class="nav-desc">Recent</div>
+                </div>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="nav-icon">順</div>
+                <div class="nav-text">
+                    <div class="nav-name">Leaderboard</div>
+                    <div class="nav-desc">Rankings</div>
+                </div>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="nav-icon">図</div>
+                <div class="nav-text">
+                    <div class="nav-name">Library</div>
+                    <div class="nav-desc">Resources</div>
+                </div>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="nav-icon">統</div>
+                <div class="nav-text">
+                    <div class="nav-name">Stats</div>
+                    <div class="nav-desc">Analytics</div>
+                </div>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="nav-icon">購</div>
+                <div class="nav-text">
+                    <div class="nav-name">Subscribe</div>
+                    <div class="nav-desc">Premium</div>
+                </div>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="nav-icon">投</div>
+                <div class="nav-text">
+                    <div class="nav-name">Submit</div>
+                    <div class="nav-desc">Upload</div>
+                </div>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="nav-icon">人</div>
+                <div class="nav-text">
+                    <div class="nav-name">Profile</div>
+                    <div class="nav-desc">Settings</div>
+                </div>
+            </a>
+        </nav>
+
+        <div class="study-streak">
+            <div class="streak-content">
+                <div class="streak-icon">学</div>
+                <div>
+                    <div class="streak-text">Study Streak</div>
+                    <div class="streak-subtext">23 days strong!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="content-wrapper">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">ダッシュボード</h1>
+            <h2 class="welcome-subtitle">Your Learning Analytics</h2>
+            <p class="welcome-description">
+                Track your progress, analyze your study patterns, and discover insights about your Japanese learning journey.
+            </p>
+        </div>
+
+        <!-- Recent Entries Table -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <div class="card-icon">履</div>
+                    Recent Entries
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Activity</th>
+                            <th>Words</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="date-cell">2025-08-26</td>
+                            <td class="activity-cell">Spent 15 minutes on 'Amakano 2'</td>
+                            <td class="words-cell">-</td>
+                        </tr>
+                        <tr>
+                            <td class="date-cell">2025-08-26</td>
+                            <td class="activity-cell">Spent 12 minutes on 'Amakano 2'</td>
+                            <td class="words-cell">-</td>
+                        </tr>
+                        <tr>
+                            <td class="date-cell">2025-08-20</td>
+                            <td class="activity-cell">Spent 23 minutes on 'Amakano 2'</td>
+                            <td class="words-cell">-</td>
+                        </tr>
+                        <tr>
+                            <td class="date-cell">2025-08-15</td>
+                            <td class="activity-cell">Spent 2 minutes on 'Amakano 2'</td>
+                            <td class="words-cell">-</td>
+                        </tr>
+                        <tr>
+                            <td class="date-cell">2025-08-13</td>
+                            <td class="activity-cell">Read 32 pages of 'Spy x Family'</td>
+                            <td class="words-cell">-</td>
+                        </tr>
+                        <tr>
+                            <td class="date-cell">2025-08-12</td>
+                            <td class="activity-cell">Completed vocabulary review</td>
+                            <td class="words-cell">45</td>
+                        </tr>
+                        <tr>
+                            <td class="date-cell">2025-08-11</td>
+                            <td class="activity-cell">Watched anime episode with subtitles</td>
+                            <td class="words-cell">23</td>
+                        </tr>
+                        <tr>
+                            <td class="date-cell">2025-08-10</td>
+                            <td class="activity-cell">Read manga chapter</td>
+                            <td class="words-cell">67</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <!-- Media Consumption Pie Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <div class="card-icon">媒</div>
+                        Media Consumption
+                    </h3>
+                </div>
+                <div class="card-content">
+                    <div class="pie-chart-container">
+                        <svg class="pie-chart" viewBox="0 0 100 100">
+                            <!-- Books: 25% -->
+                            <circle cx="50" cy="50" r="15.915" fill="transparent" stroke="#06b6d4" stroke-width="12"
+                                    stroke-dasharray="25.13 100.53" stroke-dashoffset="0" class="pie-slice"/>
+                            <!-- Manga: 37% -->
+                            <circle cx="50" cy="50" r="15.915" fill="transparent" stroke="#ec4899" stroke-width="12"
+                                    stroke-dasharray="37.19 100.53" stroke-dashoffset="-25.13" class="pie-slice"/>
+                            <!-- Video Games: 17% -->
+                            <circle cx="50" cy="50" r="15.915" fill="transparent" stroke="#6b7280" stroke-width="12"
+                                    stroke-dasharray="17.09 100.53" stroke-dashoffset="-62.32" class="pie-slice"/>
+                            <!-- Anime: 21% -->
+                            <circle cx="50" cy="50" r="15.915" fill="transparent" stroke="#3b82f6" stroke-width="12"
+                                    stroke-dasharray="21.11 100.53" stroke-dashoffset="-79.41" class="pie-slice"/>
+                        </svg>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-label">
+                                <div class="legend-color" style="background: #06b6d4;"></div>
+                                Books
+                            </div>
+                            <div class="legend-value">12 items (25%)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label">
+                                <div class="legend-color" style="background: #ec4899;"></div>
+                                Manga
+                            </div>
+                            <div class="legend-value">18 items (37%)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label">
+                                <div class="legend-color" style="background: #6b7280;"></div>
+                                Video Games
+                            </div>
+                            <div class="legend-value">8 items (17%)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label">
+                                <div class="legend-color" style="background: #3b82f6;"></div>
+                                Anime
+                            </div>
+                            <div class="legend-value">10 items (21%)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fixed Weekly Study Time bar heights to match React exactly -->
+            <div class="card">
+                <div class="card-header">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <h3 class="card-title">
+                            <div class="card-icon">時</div>
+                            Weekly Study Time
+                        </h3>
+                        <div class="week-nav">
+                            <button class="week-nav-button">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M15 18l-6-6 6-6"/>
+                                </svg>
+                            </button>
+                            <span class="week-nav-label">Aug 19-25</span>
+                            <button class="week-nav-button">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 18l6-6-6-6"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="bar-chart">
+                        <div class="bar-container">
+                            <div class="bar-fill" style="height: 50%;">
+                                <div class="bar-inner"></div>
+                            </div>
+                            <div class="bar-label">Mon</div>
+                            <div class="bar-value">45m</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="height: 35.6%;">
+                                <div class="bar-inner"></div>
+                            </div>
+                            <div class="bar-label">Tue</div>
+                            <div class="bar-value">32m</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="height: 74.4%;">
+                                <div class="bar-inner"></div>
+                            </div>
+                            <div class="bar-label">Wed</div>
+                            <div class="bar-value">67m</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="height: 25.6%;">
+                                <div class="bar-inner"></div>
+                            </div>
+                            <div class="bar-label">Thu</div>
+                            <div class="bar-value">23m</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="height: 98.9%;">
+                                <div class="bar-inner"></div>
+                            </div>
+                            <div class="bar-label">Fri</div>
+                            <div class="bar-value">89m</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="height: 62.2%;">
+                                <div class="bar-inner"></div>
+                            </div>
+                            <div class="bar-label">Sat</div>
+                            <div class="bar-value">56m</div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="height: 37.8%;">
+                                <div class="bar-inner"></div>
+                            </div>
+                            <div class="bar-label">Sun</div>
+                            <div class="bar-value">34m</div>
+                        </div>
+                    </div>
+                    <div class="chart-summary">
+                        <div class="chart-summary-main">Total: 346 minutes</div>
+                        <div class="chart-summary-sub">Average: 49 min/day</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reading Speed Chart -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <div class="card-icon">速</div>
+                    Reading Speed by Work
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="line-chart-container">
+                    <div class="y-axis-label">Characters/min</div>
+                    <div class="chart-area">
+                        <div class="grid-lines">
+                            <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+                            <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+                            <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+                            <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+                        </div>
+                        <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <!-- Spy x Family curve -->
+                            <polyline class="chart-line" stroke="#06b6d4"
+                                      points="0,71 11,68 22,63 33,66 44,57 55,51 66,63 77,43 88,49 100,37"/>
+                            <!-- Naruto curve -->
+                            <polyline class="chart-line" stroke="#ec4899"
+                                      points="0,63 11,57 22,49 33,60 44,43 55,37 66,49 77,29 88,37 100,20"/>
+                            <!-- Berserk curve -->
+                            <polyline class="chart-line" stroke="#6b7280"
+                                      points="0,89 11,83 22,77 33,86 44,71 55,66 66,77 77,63 88,69 100,54"/>
+
+                            <!-- Data points -->
+                            <circle class="chart-point" cx="0" cy="71" r="2" fill="#06b6d4"/>
+                            <circle class="chart-point" cx="11" cy="68" r="2" fill="#06b6d4"/>
+                            <circle class="chart-point" cx="22" cy="63" r="2" fill="#06b6d4"/>
+                            <circle class="chart-point" cx="33" cy="66" r="2" fill="#06b6d4"/>
+                            <circle class="chart-point" cx="44" cy="57" r="2" fill="#06b6d4"/>
+                            <circle class="chart-point" cx="55" cy="51" r="2" fill="#06b6d4"/>
+                            <circle class="chart-point" cx="66" cy="63" r="2" fill="#06b6d4"/>
+                            <circle class="chart-point" cx="77" cy="43" r="2" fill="#06b6d4"/>
+                            <circle class="chart-point" cx="88" cy="49" r="2" fill="#06b6d4"/>
+                            <circle class="chart-point" cx="100" cy="37" r="2" fill="#06b6d4"/>
+
+                            <circle class="chart-point" cx="0" cy="63" r="2" fill="#ec4899"/>
+                            <circle class="chart-point" cx="11" cy="57" r="2" fill="#ec4899"/>
+                            <circle class="chart-point" cx="22" cy="49" r="2" fill="#ec4899"/>
+                            <circle class="chart-point" cx="33" cy="60" r="2" fill="#ec4899"/>
+                            <circle class="chart-point" cx="44" cy="43" r="2" fill="#ec4899"/>
+                            <circle class="chart-point" cx="55" cy="37" r="2" fill="#ec4899"/>
+                            <circle class="chart-point" cx="66" cy="49" r="2" fill="#ec4899"/>
+                            <circle class="chart-point" cx="77" cy="29" r="2" fill="#ec4899"/>
+                            <circle class="chart-point" cx="88" cy="37" r="2" fill="#ec4899"/>
+                            <circle class="chart-point" cx="100" cy="20" r="2" fill="#ec4899"/>
+
+                            <circle class="chart-point" cx="0" cy="89" r="2" fill="#6b7280"/>
+                            <circle class="chart-point" cx="11" cy="83" r="2" fill="#6b7280"/>
+                            <circle class="chart-point" cx="22" cy="77" r="2" fill="#6b7280"/>
+                            <circle class="chart-point" cx="33" cy="86" r="2" fill="#6b7280"/>
+                            <circle class="chart-point" cx="44" cy="71" r="2" fill="#6b7280"/>
+                            <circle class="chart-point" cx="55" cy="66" r="2" fill="#6b7280"/>
+                            <circle class="chart-point" cx="66" cy="77" r="2" fill="#6b7280"/>
+                            <circle class="chart-point" cx="77" cy="63" r="2" fill="#6b7280"/>
+                            <circle class="chart-point" cx="88" cy="69" r="2" fill="#6b7280"/>
+                            <circle class="chart-point" cx="100" cy="54" r="2" fill="#6b7280"/>
+                        </svg>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-label">
+                            <div class="legend-color" style="background: #06b6d4;"></div>
+                            Spy x Family
+                        </div>
+                        <div class="legend-label">
+                            <div class="legend-color" style="background: #ec4899;"></div>
+                            Naruto
+                        </div>
+                        <div class="legend-label">
+                            <div class="legend-color" style="background: #6b7280;"></div>
+                            Berserk
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Charts Grid -->
+        <div class="charts-grid">
+            <!-- Vocabulary Retention -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <div class="card-icon">記</div>
+                        Vocabulary Retention
+                    </h3>
+                </div>
+                <div class="card-content">
+                    <div class="progress-section">
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-label">Last 24h</span>
+                                <div class="progress-stats">
+                                    <div class="progress-percentage">95%</div>
+                                    <div class="progress-count">23 words</div>
+                                </div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 95%;"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-label">Last week</span>
+                                <div class="progress-stats">
+                                    <div class="progress-percentage">87%</div>
+                                    <div class="progress-count">156 words</div>
+                                </div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 87%;"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-label">Last month</span>
+                                <div class="progress-stats">
+                                    <div class="progress-percentage">73%</div>
+                                    <div class="progress-count">642 words</div>
+                                </div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 73%;"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-label">3+ months</span>
+                                <div class="progress-stats">
+                                    <div class="progress-percentage">61%</div>
+                                    <div class="progress-count">1247 words</div>
+                                </div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 61%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Streak -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <div class="card-icon">習</div>
+                        Study Streak
+                    </h3>
+                </div>
+                <div class="card-content">
+                    <div class="streak-display">
+                        <div class="streak-number">23</div>
+                        <div class="streak-label">Days in a row</div>
+                        <div class="streak-grid">
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell active"></div>
+                            <div class="streak-cell inactive"></div>
+                            <div class="streak-cell inactive"></div>
+                            <div class="streak-cell inactive"></div>
+                            <div class="streak-cell inactive"></div>
+                            <div class="streak-cell inactive"></div>
+                        </div>
+                        <div class="streak-period">Last 3 weeks</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

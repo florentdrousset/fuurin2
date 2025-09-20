@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achievements - ふうりん</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            min-height: 100vh;
+            color: #0f172a;
+            font-size: 14px;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 50;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .nav-icon {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon:hover {
+            border-color: #cbd5e1;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 64px;
+            width: 256px;
+            height: calc(100vh - 64px);
+            background: #ffffff;
+            border-right: 2px solid #e2e8f0;
+            padding: 24px 16px;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #475569;
+            margin-bottom: 16px;
+            padding: 0 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #64748b;
+            transition: all 0.3s ease;
+            background: #ffffff;
+        }
+
+        .nav-item:hover {
+            border-color: #cbd5e1;
+            transform: scale(1.02);
+        }
+
+        .nav-item.active {
+            border-color: #06b6d4;
+            background: linear-gradient(135deg, #ecfeff, #e0f2fe);
+            color: #0891b2;
+        }
+
+        .nav-icon-kanji {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .nav-item.active .nav-icon-kanji {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+            border-color: #0891b2;
+        }
+
+        .nav-text {
+            flex: 1;
+        }
+
+        .nav-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .nav-desc {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 256px;
+            padding-top: 64px;
+            padding: 88px 24px 24px;
+            max-width: 1536px;
+            margin-left: 256px;
+            margin-right: auto;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.05));
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            border: 2px solid #e2e8f0;
+            image-rendering: pixelated;
+        }
+
+        .welcome-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .welcome-desc {
+            color: #64748b;
+            font-size: 14px;
+            max-width: 600px;
+        }
+
+        /* Filter Buttons */
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover {
+            border-color: #cbd5e1;
+        }
+
+        .filter-btn.active {
+            border-color: #06b6d4;
+            background: linear-gradient(135deg, #ecfeff, #e0f2fe);
+            color: #0891b2;
+        }
+
+        /* Category Grid */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .category-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover {
+            border-color: #cbd5e1;
+        }
+
+        .category-card.active {
+            border-color: #06b6d4;
+            background: linear-gradient(135deg, #ecfeff, #e0f2fe);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: #475569;
+        }
+
+        .category-card.active .category-icon {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+            border-color: #0891b2;
+        }
+
+        .category-info h3 {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .category-info p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            transition: width 0.3s ease;
+        }
+
+        /* Achievement Grid */
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .achievement-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card:hover {
+            border-color: #cbd5e1;
+        }
+
+        .achievement-card.locked {
+            border-color: #e2e8f0;
+            opacity: 0.75;
+        }
+
+        .achievement-card.locked:hover {
+            opacity: 0.9;
+        }
+
+        .achievement-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .achievement-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            border: 2px solid;
+        }
+
+        .achievement-icon.common {
+            background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+            border-color: #d1d5db;
+            color: #374151;
+        }
+
+        .achievement-icon.uncommon {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-color: #86efac;
+            color: #166534;
+        }
+
+        .achievement-icon.rare {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-color: #93c5fd;
+            color: #1d4ed8;
+        }
+
+        .achievement-icon.epic {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border-color: #c4b5fd;
+            color: #7c3aed;
+        }
+
+        .achievement-icon.legendary {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border-color: #fcd34d;
+            color: #d97706;
+        }
+
+        .achievement-icon.locked {
+            background: linear-gradient(135deg, #fafafa, #f5f5f5);
+            border-color: #e5e5e5;
+            color: #a3a3a3;
+        }
+
+        .achievement-info h3 {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .achievement-info.locked h3 {
+            color: #64748b;
+        }
+
+        .achievement-desc {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .achievement-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .earned-badge {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .achievement-date {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .progress-section {
+            margin-top: 8px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .progress-value {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .rarity-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            text-transform: capitalize;
+            border: 1px solid;
+        }
+
+        .rarity-badge.common {
+            background: #f9fafb;
+            color: #374151;
+            border-color: #e5e7eb;
+        }
+
+        .rarity-badge.uncommon {
+            background: #f0fdf4;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .rarity-badge.rare {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-color: #bfdbfe;
+        }
+
+        .rarity-badge.epic {
+            background: #faf5ff;
+            color: #7c3aed;
+            border-color: #e9d5ff;
+        }
+
+        .rarity-badge.legendary {
+            background: #fffbeb;
+            color: #d97706;
+            border-color: #fed7aa;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .stats-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            border-color: #cbd5e1;
+        }
+
+        .stats-header {
+            padding: 16px 16px 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .stats-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .stats-icon {
+            width: 32px;
+            height: 32px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .stats-content {
+            padding: 16px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .almost-there-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(248, 250, 252, 0.5);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .almost-there-item:hover {
+            background: #f8fafc;
+        }
+
+        .almost-there-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .almost-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid;
+        }
+
+        .almost-icon.epic {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border-color: #c4b5fd;
+            color: #7c3aed;
+        }
+
+        .almost-icon.rare {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-color: #93c5fd;
+            color: #1d4ed8;
+        }
+
+        .almost-info h4 {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .almost-info p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .next-goal-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .next-goal-btn:hover {
+            background: rgba(248, 250, 252, 0.5);
+            border-color: #cbd5e1;
+        }
+
+        .next-goal-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: #d97706;
+        }
+
+        .next-goal-info h4 {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .next-goal-info p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+Top Navigation
+<nav class="top-nav">
+    <div class="logo">ふうりん</div>
+    <div class="nav-icons">
+        <button class="nav-icon">🔔</button>
+        <button class="nav-icon">👤</button>
+    </div>
+</nav>
+
+Sidebar Navigation
+<aside class="sidebar">
+    <div class="sidebar-header">ナビゲーション</div>
+    <a href="index.html" class="nav-item">
+        <div class="nav-icon-kanji">家</div>
+        <div class="nav-text">
+            <div class="nav-title">Home</div>
+            <div class="nav-desc">Main dashboard</div>
+        </div>
+    </a>
+    <a href="dashboard.html" class="nav-item">
+        <div class="nav-icon-kanji">板</div>
+        <div class="nav-text">
+            <div class="nav-title">Dashboard</div>
+            <div class="nav-desc">Analytics view</div>
+        </div>
+    </a>
+    <a href="achievements.html" class="nav-item active">
+        <div class="nav-icon-kanji">実</div>
+        <div class="nav-text">
+            <div class="nav-title">Awards</div>
+            <div class="nav-desc">Your milestones</div>
+        </div>
+    </a>
+    <a href="activity-feed.html" class="nav-item">
+        <div class="nav-icon-kanji">流</div>
+        <div class="nav-text">
+            <div class="nav-title">Feed</div>
+            <div class="nav-desc">Activity stream</div>
+        </div>
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon-kanji">順</div>
+        <div class="nav-text">
+            <div class="nav-title">Board</div>
+            <div class="nav-desc">Rankings</div>
+        </div>
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon-kanji">本</div>
+        <div class="nav-text">
+            <div class="nav-title">Library</div>
+            <div class="nav-desc">Your collection</div>
+        </div>
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon-kanji">統</div>
+        <div class="nav-text">
+            <div class="nav-title">Stats</div>
+            <div class="nav-desc">Detailed metrics</div>
+        </div>
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon-kanji">購</div>
+        <div class="nav-text">
+            <div class="nav-title">Subscribe</div>
+            <div class="nav-desc">Premium features</div>
+        </div>
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon-kanji">投</div>
+        <div class="nav-text">
+            <div class="nav-title">Submit</div>
+            <div class="nav-desc">Add content</div>
+        </div>
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon-kanji">人</div>
+        <div class="nav-text">
+            <div class="nav-title">Profile</div>
+            <div class="nav-desc">Your account</div>
+        </div>
+    </a>
+</aside>
+
+Main Content
+<main class="main-content">
+    Welcome Section
+    <div class="welcome-section">
+        <h1 class="welcome-title">実績 Achievements</h1>
+        <h2 class="welcome-subtitle">Your learning milestones</h2>
+        <p class="welcome-desc">Track your progress and celebrate your Japanese learning journey with these achievements.</p>
+    </div>
+
+    Filter Buttons
+    <div class="filter-buttons">
+        <button class="filter-btn active" data-category="all">All</button>
+    </div>
+
+    Category Grid
+    <div class="category-grid">
+        <div class="category-card" data-category="learning">
+            <div class="category-header">
+                <div class="category-icon">学</div>
+                <div class="category-info">
+                    <h3>Learning</h3>
+                    <p>12/20</p>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 60%"></div>
+            </div>
+        </div>
+        <div class="category-card" data-category="reading">
+            <div class="category-header">
+                <div class="category-icon">読</div>
+                <div class="category-info">
+                    <h3>Reading</h3>
+                    <p>8/15</p>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 53%"></div>
+            </div>
+        </div>
+        <div class="category-card" data-category="writing">
+            <div class="category-header">
+                <div class="category-icon">書</div>
+                <div class="category-info">
+                    <h3>Writing</h3>
+                    <p>5/12</p>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 42%"></div>
+            </div>
+        </div>
+        <div class="category-card" data-category="listening">
+            <div class="category-header">
+                <div class="category-icon">聞</div>
+                <div class="category-info">
+                    <h3>Listening</h3>
+                    <p>3/10</p>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 30%"></div>
+            </div>
+        </div>
+        <div class="category-card" data-category="speaking">
+            <div class="category-header">
+                <div class="category-icon">話</div>
+                <div class="category-info">
+                    <h3>Speaking</h3>
+                    <p>2/8</p>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 25%"></div>
+            </div>
+        </div>
+    </div>
+
+    Achievement Grid
+    <div class="achievement-grid" id="achievementGrid">
+        Earned Achievements
+        <div class="achievement-card" data-category="learning">
+            <div class="achievement-header">
+                <div class="achievement-icon common">始</div>
+                <div class="achievement-info">
+                    <h3>First Steps</h3>
+                    <p class="achievement-desc">Complete your first lesson</p>
+                    <div class="achievement-status">
+                        <span class="earned-badge">Earned</span>
+                        <span class="achievement-date">2025-08-20</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge common">common</span>
+            </div>
+        </div>
+
+        <div class="achievement-card" data-category="learning">
+            <div class="achievement-header">
+                <div class="achievement-icon rare">漢</div>
+                <div class="achievement-info">
+                    <h3>Kanji Master</h3>
+                    <p class="achievement-desc">Learn 100 kanji characters</p>
+                    <div class="achievement-status">
+                        <span class="earned-badge">Earned</span>
+                        <span class="achievement-date">2025-08-26</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge rare">rare</span>
+            </div>
+        </div>
+
+        <div class="achievement-card" data-category="learning">
+            <div class="achievement-header">
+                <div class="achievement-icon uncommon">炎</div>
+                <div class="achievement-info">
+                    <h3>Study Streak</h3>
+                    <p class="achievement-desc">Study for 7 days in a row</p>
+                    <div class="achievement-status">
+                        <span class="earned-badge">Earned</span>
+                        <span class="achievement-date">2025-08-15</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge uncommon">uncommon</span>
+            </div>
+        </div>
+
+        <div class="achievement-card" data-category="learning">
+            <div class="achievement-header">
+                <div class="achievement-icon rare">語</div>
+                <div class="achievement-info">
+                    <h3>Vocabulary Builder</h3>
+                    <p class="achievement-desc">Master 500 words</p>
+                    <div class="achievement-status">
+                        <span class="earned-badge">Earned</span>
+                        <span class="achievement-date">2025-08-10</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge rare">rare</span>
+            </div>
+        </div>
+
+        <div class="achievement-card" data-category="reading">
+            <div class="achievement-header">
+                <div class="achievement-icon uncommon">速</div>
+                <div class="achievement-info">
+                    <h3>Speed Reader</h3>
+                    <p class="achievement-desc">Read 1000 characters in one session</p>
+                    <div class="achievement-status">
+                        <span class="earned-badge">Earned</span>
+                        <span class="achievement-date">2025-08-05</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge uncommon">uncommon</span>
+            </div>
+        </div>
+
+        Locked Achievements
+        <div class="achievement-card locked" data-category="learning">
+            <div class="achievement-header">
+                <div class="achievement-icon locked">献</div>
+                <div class="achievement-info locked">
+                    <h3>Dedication</h3>
+                    <p class="achievement-desc">Study for 30 days in a row</p>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Progress</span>
+                            <span class="progress-value">23/30</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 77%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge epic">epic</span>
+            </div>
+        </div>
+
+        <div class="achievement-card locked" data-category="learning">
+            <div class="achievement-header">
+                <div class="achievement-icon locked">伝</div>
+                <div class="achievement-info locked">
+                    <h3>Kanji Legend</h3>
+                    <p class="achievement-desc">Learn 500 kanji characters</p>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Progress</span>
+                            <span class="progress-value">156/500</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 31%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge legendary">legendary</span>
+            </div>
+        </div>
+
+        <div class="achievement-card locked" data-category="learning">
+            <div class="achievement-header">
+                <div class="achievement-icon locked">文</div>
+                <div class="achievement-info locked">
+                    <h3>Grammar Guru</h3>
+                    <p class="achievement-desc">Complete all grammar lessons</p>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Progress</span>
+                            <span class="progress-value">45/100</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge rare">rare</span>
+            </div>
+        </div>
+
+        <div class="achievement-card locked" data-category="reading">
+            <div class="achievement-header">
+                <div class="achievement-icon locked">頁</div>
+                <div class="achievement-info locked">
+                    <h3>Page Turner</h3>
+                    <p class="achievement-desc">Read 50 pages in one day</p>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Progress</span>
+                            <span class="progress-value">12/50</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 24%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge uncommon">uncommon</span>
+            </div>
+        </div>
+
+        <div class="achievement-card locked" data-category="reading">
+            <div class="achievement-header">
+                <div class="achievement-icon locked">本</div>
+                <div class="achievement-info locked">
+                    <h3>Book Worm</h3>
+                    <p class="achievement-desc">Finish reading 5 books</p>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Progress</span>
+                            <span class="progress-value">2/5</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge rare">rare</span>
+            </div>
+        </div>
+
+        <div class="achievement-card locked" data-category="writing">
+            <div class="achievement-header">
+                <div class="achievement-icon locked">書</div>
+                <div class="achievement-info locked">
+                    <h3>Calligraphy Master</h3>
+                    <p class="achievement-desc">Practice writing for 100 hours</p>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Progress</span>
+                            <span class="progress-value">45/100</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge epic">epic</span>
+            </div>
+        </div>
+
+        <div class="achievement-card locked" data-category="writing">
+            <div class="achievement-header">
+                <div class="achievement-icon locked">完</div>
+                <div class="achievement-info locked">
+                    <h3>Perfect Stroke</h3>
+                    <p class="achievement-desc">Write 1000 kanji perfectly</p>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Progress</span>
+                            <span class="progress-value">234/1000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 23%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span class="rarity-badge legendary">legendary</span>
+            </div>
+        </div>
+    </div>
+
+    Stats Grid
+    <div class="stats-grid">
+        <div class="stats-card">
+            <div class="stats-header">
+                <div class="stats-title">
+                    <div class="stats-icon">統</div>
+                    Achievement Stats
+                </div>
+            </div>
+            <div class="stats-content">
+                <div class="stat-row">
+                    <span class="stat-label">Total Earned</span>
+                    <span class="stat-value">5/12</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Completion Rate</span>
+                    <span class="stat-value">41.7%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Rarest Achievement</span>
+                    <span class="stat-value" style="color: #1d4ed8;">Rare</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-header">
+                <div class="stats-title">
+                    <div class="stats-icon">近</div>
+                    Almost There
+                </div>
+            </div>
+            <div class="stats-content">
+                <div class="almost-there-item">
+                    <div class="almost-icon epic">献</div>
+                    <div class="almost-info">
+                        <h4>Dedication</h4>
+                        <p>7 days remaining</p>
+                    </div>
+                </div>
+                <div class="almost-there-item">
+                    <div class="almost-icon rare">文</div>
+                    <div class="almost-info">
+                        <h4>Grammar Guru</h4>
+                        <p>55 lessons remaining</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-header">
+                <div class="stats-title">
+                    <div class="stats-icon">目</div>
+                    Next Goals
+                </div>
+            </div>
+            <div class="stats-content">
+                <button class="next-goal-btn">
+                    <div class="next-goal-icon">伝</div>
+                    <div class="next-goal-info">
+                        <h4>Kanji Legend</h4>
+                        <p>Learn 344 more kanji</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Category filtering functionality
+    const categoryCards = document.querySelectorAll('.category-card');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const achievementCards = document.querySelectorAll('.achievement-card');
+    let selectedCategory = 'all';
+
+    // Add click handlers to category cards
+    categoryCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const category = card.dataset.category;
+            selectCategory(category);
+        });
+    });
+
+    // Add click handlers to filter buttons
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const category = btn.dataset.category;
+            selectCategory(category);
+        });
+    });
+
+    function selectCategory(category) {
+        selectedCategory = category;
+
+        // Update active states
+        categoryCards.forEach(card => {
+            card.classList.toggle('active', card.dataset.category === category);
+        });
+
+        filterBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.category === category);
+        });
+
+        // Filter achievements
+        achievementCards.forEach(card => {
+            if (category === 'all' || card.dataset.category === category) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // Initialize with 'all' category
+    selectCategory('all');
+</script>
+</body>
+</html>
