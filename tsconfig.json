@@ -1,6 +1,0 @@
-{
-  "extends": "@sveltejs/kit/tsconfig",
-  "compilerOptions": {
-    "strict": true
-  }
-}

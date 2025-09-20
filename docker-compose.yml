@@ -1,20 +1,57 @@
-version: "3.9"
-
 services:
-  web:
+  db:
+    image: postgres:16-alpine
+    container_name: fuurin2_db
+    environment:
+      - POSTGRES_DB=fuurin
+      - POSTGRES_USER=fuurin
+      - POSTGRES_PASSWORD=fuurin
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fuurin -d fuurin"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
     build:
-      context: .
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: fuurin2_api
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql+psycopg://fuurin:fuurin@db:5432/fuurin
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  front:
+    build:
+      context: ./front
       dockerfile: Dockerfile
     container_name: fuurin2_web
     ports:
       - "3000:3000"
     environment:
-      # SvelteKit uses PORT env if provided; keeping defaults is fine
       - NODE_ENV=production
-    restart: unless-stopped
+    depends_on:
+      - api
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+
+volumes:
+  db_data:
